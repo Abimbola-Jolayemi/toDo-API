@@ -33,10 +33,10 @@ public class TaskServicesImplTest {
     @Autowired
     private TaskRepository taskRepository;
 
-    @AfterEach
-    public void tearDown() {
-        taskRepository.deleteAll();
-    }
+//    @AfterEach
+//    public void tearDown() {
+//        taskRepository.deleteAll();
+//    }
 
     @Test
     public void testThatTaskCanBeCreated() {
@@ -281,6 +281,14 @@ public class TaskServicesImplTest {
         MarkTaskAsCompletedRequest taskDTO = new MarkTaskAsCompletedRequest();
         taskDTO.setId("123");
         assertThrows(IllegalStateException.class, () -> taskService.markTaskAsCompleted(taskDTO));
+    }
+
+    @Test
+    void testThatAllTasksCanBeGottenForAParticularUser(){
+        List<GetAllTasksResponse> listOfTasks = taskService.getAllTasks("67721f34859973333c743bcc");
+        System.out.print(listOfTasks);
+        assertEquals(2, listOfTasks.size());
+
     }
 
 }

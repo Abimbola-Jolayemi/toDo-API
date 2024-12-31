@@ -16,6 +16,5 @@ public interface TaskRepository extends MongoRepository<Task, String> {
     List<Task> findByCategory(TaskCategory category);
 
     List<Task> findAllByUserId(String userId);
-
 }
 

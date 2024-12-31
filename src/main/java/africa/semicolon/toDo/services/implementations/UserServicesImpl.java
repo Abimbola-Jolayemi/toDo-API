@@ -86,8 +86,8 @@ public class UserServicesImpl implements UserService {
         user.setLoggedIn(true);
         userRepository.save(user);
 
-        // Prepare the response
         LoginResponse response = new LoginResponse();
+        response.setUserId(user.getId());
         response.setEmail(loginRequest.getEmail());
         response.setLoggedIn(true);
         response.setMessage("Login successful");

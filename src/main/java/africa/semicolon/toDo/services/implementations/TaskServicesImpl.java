@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -159,12 +159,23 @@ public class TaskServicesImpl implements TaskServices{
     }
 
     @Override
-    public List<GetAllTasksResponse> getAllTasks(GetAllTasksRequest request) {
-        List<Task> tasks = taskRepository.findAllByUserId(request.getUserId());
-        if (tasks.isEmpty()) {
-            throw new TaskNotFoundException("Task not found");
+    public List<GetAllTasksResponse> getAllTasks(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("UserId cannot be null or blank");
         }
+
+        List<Task> tasks = getTasksByUserId(userId);
+        if (tasks == null || tasks.isEmpty()) {
+            throw new TaskNotFoundException("No tasks found for userId: " + userId);
+        }
+
         return Mapper.mapToGetAllTasksResponseList(tasks);
+    }
+
+
+    @Override
+    public List<Task> getTasksByUserId(String userId) {
+        return taskRepository.findAllByUserId(userId);
     }
 
     @Override
@@ -224,10 +235,7 @@ public class TaskServicesImpl implements TaskServices{
         );
     }
 
-    @Override
-    public List<Task> getTasksByUserId(String userId) {
-        return taskRepository.findAllByUserId(userId);
-    }
+
 
     @Override
     public DeleteAllTasksResponse deleteAllTasks(DeleteAllTasksRequest request) {
@@ -245,10 +253,8 @@ public class TaskServicesImpl implements TaskServices{
 
     @Override
     public List<CompletedTaskResponse> getCompletedTask(CompletedTaskRequest completedTaskRequest) {
-        GetAllTasksRequest getAllTasksRequest = new GetAllTasksRequest();
-        getAllTasksRequest.setUserId(completedTaskRequest.getUserId());
 
-        List<GetAllTasksResponse> allTasks = getAllTasks(getAllTasksRequest);
+        List<GetAllTasksResponse> allTasks = getAllTasks(completedTaskRequest.getUserId());
 
         return allTasks.stream()
                 .filter(task -> task.getStatus() == TaskStatus.COMPLETED)
@@ -258,10 +264,8 @@ public class TaskServicesImpl implements TaskServices{
 
     @Override
     public List<CompletedTaskResponse> getInProgressTask(CompletedTaskRequest completedTaskRequest) {
-        GetAllTasksRequest getAllTasksRequest = new GetAllTasksRequest();
-        getAllTasksRequest.setUserId(completedTaskRequest.getUserId());
 
-        List<GetAllTasksResponse> allTasks = getAllTasks(getAllTasksRequest);
+        List<GetAllTasksResponse> allTasks = getAllTasks(completedTaskRequest.getUserId());
 
         return allTasks.stream()
                 .filter(task -> task.getStatus() == TaskStatus.IN_PROGRESS)
@@ -271,10 +275,8 @@ public class TaskServicesImpl implements TaskServices{
 
     @Override
     public List<CompletedTaskResponse> getPendingTask(CompletedTaskRequest completedTaskRequest) {
-        GetAllTasksRequest getAllTasksRequest = new GetAllTasksRequest();
-        getAllTasksRequest.setUserId(completedTaskRequest.getUserId());
 
-        List<GetAllTasksResponse> allTasks = getAllTasks(getAllTasksRequest);
+        List<GetAllTasksResponse> allTasks = getAllTasks(completedTaskRequest.getUserId());
 
         return allTasks.stream()
                 .filter(task -> task.getStatus() == TaskStatus.PENDING)
@@ -284,16 +286,21 @@ public class TaskServicesImpl implements TaskServices{
 
     @Override
     public List<CompletedTaskResponse> getOverdueTask(CompletedTaskRequest completedTaskRequest) {
-        GetAllTasksRequest getAllTasksRequest = new GetAllTasksRequest();
-        getAllTasksRequest.setUserId(completedTaskRequest.getUserId());
 
-        List<GetAllTasksResponse> allTasks = getAllTasks(getAllTasksRequest);
+        List<GetAllTasksResponse> allTasks = getAllTasks(completedTaskRequest.getUserId());
 
         return allTasks.stream()
                 .filter(task -> task.getStatus() == TaskStatus.OVERDUE)
                 .map(task -> mapToCompletedTaskResponse(task))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String clearDb() {
+        taskRepository.deleteAll();
+        return "Deleted all tasks successfully";
+    }
+
 
     private CompletedTaskResponse mapToCompletedTaskResponse(GetAllTasksResponse task) {
         CompletedTaskResponse response = new CompletedTaskResponse();

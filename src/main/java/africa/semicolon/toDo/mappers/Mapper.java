@@ -27,6 +27,9 @@ public class Mapper {
     }
 
     public static GetAllTasksResponse mapToGetAllTasksResponse(Task task) {
+        if (task == null) {
+            throw new IllegalArgumentException("Task cannot be null");
+        }
         return new GetAllTasksResponse(
                 task.getId(),
                 task.getTitle(),
@@ -37,9 +40,13 @@ public class Mapper {
     }
 
     public static List<GetAllTasksResponse> mapToGetAllTasksResponseList(List<Task> tasks) {
+        if (tasks == null) {
+            throw new IllegalArgumentException("Task list cannot be null");
+        }
         return tasks.stream()
                 .map(Mapper::mapToGetAllTasksResponse)
                 .collect(Collectors.toList());
     }
+
 
 }

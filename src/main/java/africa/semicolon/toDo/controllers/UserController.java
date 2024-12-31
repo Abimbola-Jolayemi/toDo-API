@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 import static javax.security.auth.callback.ConfirmationCallback.OK;
 
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -29,7 +28,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @CrossOrigin(origins = "*", methods = {RequestMethod.POST})
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterUserRequest request) {
         try {

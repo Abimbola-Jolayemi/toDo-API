@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,17 +40,18 @@ public class TaskController {
         }
     }
 
-    @PostMapping("/updateTask")
+    @PutMapping("/updateTask")
     public ResponseEntity<?> updateTask(@RequestBody UpdateTaskRequest request) {
-        try{
+        try {
             UpdateTaskResponse response = taskservices.updateTask(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (TaskNotFoundException exception){
+            return ResponseEntity.status(HttpStatus.OK).body(response);  // Use OK instead of CREATED
+        } catch (TaskNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-        } catch (Exception exception){
+        } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
         }
     }
+
 
     @DeleteMapping("/deleteTask")
     public ResponseEntity<?> deleteTask(@RequestBody DeleteTaskRequest request) {
@@ -63,14 +65,19 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/getAllTasks")
-    public ResponseEntity<?> getAllTasks(@RequestBody GetAllTasksRequest request) {
+
+    @GetMapping("/getAllTasks/{userId}")
+    public ResponseEntity<?> getAllTasks(@PathVariable("userId") String userId) {
+        System.out.println("Received userId: " + userId);
         try {
-            List<GetAllTasksResponse> response = taskservices.getAllTasks(request);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            List<GetAllTasksResponse> tasks = taskservices.getAllTasks(userId);
+            return ResponseEntity.ok(tasks);
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+        } catch (TaskNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
         }
     }
 
@@ -166,38 +173,16 @@ public class TaskController {
         }
     }
 
-
-
-//    @GetMapping("/searchTasks")
-//    public ResponseEntity<?> searchTask(
-//            @RequestParam(required = false) String title,
-//            @RequestParam(required = false) String description,
-//            @RequestParam(required = false) LocalDateTime deadline,
-//            @RequestParam(required = false) TaskStatus status,
-//            @RequestParam(required = false) TaskCategory category
-//    ) {
-//        try {
-//            System.out.println("Title: " + title);
-//            System.out.println("Description: " + description);
-//            System.out.println("Status: " + status);
-//            System.out.println("Category: " + category);
-//
-//            SearchTaskRequest searchRequest = new SearchTaskRequest();
-//            searchRequest.setTitle(title);
-//            searchRequest.setDescription(description);
-//            searchRequest.setDeadline(deadline);
-//            searchRequest.setStatus(status);
-//            searchRequest.setCategory(category);
-//
-//            List<SearchTaskResponse> response = taskservices.searchTasks(searchRequest);
-//            return ResponseEntity.status(HttpStatus.OK).body(response);
-//        } catch (TaskNotFoundException exception) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-//        } catch (IllegalArgumentException exception) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
-//        } catch (Exception exception) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
-//        }
-//    }
+    @DeleteMapping("/clearDb")
+    public ResponseEntity<?> clearDb(){
+        try{
+            String response = taskservices.clearDb();
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    exception.getMessage()
+            );
+        }
+    }
 
 }

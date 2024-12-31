@@ -11,7 +11,7 @@ public interface TaskServices {
     List<SearchTaskResponse> searchTasks(SearchTaskRequest request);
     UpdateTaskResponse updateTask(UpdateTaskRequest request);
     DeleteTaskResponse deleteTask(DeleteTaskRequest request);
-    List<GetAllTasksResponse> getAllTasks(GetAllTasksRequest request);
+    List<GetAllTasksResponse> getAllTasks(String userId);
     MarkTaskAsCompletedResponse markTaskAsCompleted(MarkTaskAsCompletedRequest request);
     MarkTaskAsInProgressResponse markTaskAsInProgress(MarkTaskAsInProgressRequest request);
     MarkTaskAsOverdueResponse markTaskAsOverdue(MarkTaskAsOverdueRequest request);
@@ -22,4 +22,6 @@ public interface TaskServices {
     List<CompletedTaskResponse> getInProgressTask(CompletedTaskRequest completedTaskRequest);
     List<CompletedTaskResponse> getPendingTask(CompletedTaskRequest completedTaskRequest);
     List<CompletedTaskResponse> getOverdueTask(CompletedTaskRequest completedTaskRequest);
+
+    String clearDb();
 }
