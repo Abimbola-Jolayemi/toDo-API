@@ -44,14 +44,13 @@ public class TaskController {
     public ResponseEntity<?> updateTask(@RequestBody UpdateTaskRequest request) {
         try {
             UpdateTaskResponse response = taskservices.updateTask(request);
-            return ResponseEntity.status(HttpStatus.OK).body(response);  // Use OK instead of CREATED
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (TaskNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         } catch (Exception exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
         }
     }
-
 
     @DeleteMapping("/deleteTask")
     public ResponseEntity<?> deleteTask(@RequestBody DeleteTaskRequest request) {
