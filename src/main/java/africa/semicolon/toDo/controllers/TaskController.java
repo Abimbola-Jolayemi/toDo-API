@@ -52,18 +52,17 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/deleteTask")
-    public ResponseEntity<?> deleteTask(@RequestBody DeleteTaskRequest request) {
-        try{
-            DeleteTaskResponse response = taskservices.deleteTask(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch(TaskNotFoundException exception){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
-        } catch(Exception exception){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
-        }
-    }
-
+//    @DeleteMapping("/deleteTask")
+//    public ResponseEntity<?> deleteTask(@RequestBody DeleteTaskRequest request) {
+//        try{
+//            DeleteTaskResponse response = taskservices.deleteTask(request);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//        } catch(TaskNotFoundException exception){
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+//        } catch(Exception exception){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
+//        }
+//    }
 
     @GetMapping("/getAllTasks/{userId}")
     public ResponseEntity<?> getAllTasks(@PathVariable("userId") String userId) {

@@ -148,15 +148,25 @@ public class TaskServicesImpl implements TaskServices{
     }
 
 
-    public DeleteTaskResponse deleteTask(DeleteTaskRequest request) {
-        Task task = taskRepository.findById(request.getId())
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+//    public DeleteTaskResponse deleteTask(DeleteTaskRequest request) {
+//        Task task = taskRepository.findById(request.getId())
+//                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+//
+//        taskRepository.delete(task);
+//        DeleteTaskResponse response = new DeleteTaskResponse();
+//        response.setMessage("Task deleted successfully");
+//        return response;
+//    }
 
+    @Override
+    public String deleteTask(String id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + id));
         taskRepository.delete(task);
-        DeleteTaskResponse response = new DeleteTaskResponse();
-        response.setMessage("Task deleted successfully");
-        return response;
+        return "Task with ID: " + id + " has been successfully deleted.";
     }
+
+
 
     @Override
     public List<GetAllTasksResponse> getAllTasks(String userId) {
